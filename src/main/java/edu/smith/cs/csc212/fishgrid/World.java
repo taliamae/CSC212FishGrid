@@ -157,6 +157,12 @@ public class World {
 		return r;
 	}
 	
+	public FallingRock insertFallingRockRandomly() {
+		FallingRock r = new FallingRock(this);
+		insertRandomly(r);
+		return r;
+	}
+	
 	/**
 	 * Insert a new Fish into the world at random of a specific color.
 	 * @param color - the color of the fish.
@@ -234,12 +240,13 @@ public class World {
 	 */
 	public static void objectsFollow(WorldObject target, List<? extends WorldObject> followers) {
 		// TODO(FishGrid) Comment this method!
-		// Q1. What is recentPositions?
-		// Q2. What is followers?
-		// Q3. What is target?
-		// Q4. Why is past = putWhere[i+1]? Why not putWhere[i]?
+		// Q1. What is recentPositions? A variable initiated in WorldObject that stores the order of items to queue and dequeue. 
+		// Q2. What is followers? A list of objects that follow the leader.
+		// Q3. What is target? Target is an object that represents the leader.
+		// Q4. Why is past = putWhere[i+1]? Why not putWhere[i]? The loop tells a found item where to go on the list. Since setPosition uses 0 as going before 
 		List<IntPoint> putWhere = new ArrayList<>(target.recentPositions);
 		for (int i=0; i < followers.size() && i+1 < putWhere.size(); i++) {
+			System.out.println("i= " + i + " followers size = " + followers.size() + " i + 1 = " + i+1 + " putWhere.size()= " + putWhere.size());
 			// Q5. What is the deal with the two conditions in this for-loop?
 			// Conditions are in the "while" part of this loop.
 			
