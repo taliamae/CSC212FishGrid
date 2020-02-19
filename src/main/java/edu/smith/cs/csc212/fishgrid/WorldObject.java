@@ -132,6 +132,14 @@ public abstract class WorldObject {
 	public boolean isPlayer() {
 		return isFish() && ((Fish) this).player;
 	}
+	
+	public boolean isSnail() {
+		return this instanceof Snail;
+	}
+	
+	public boolean isRock() {
+		return this instanceof Rock;
+	}
 
 	/**
 	 * Move this object down if possible.
@@ -224,6 +232,7 @@ public abstract class WorldObject {
 	 * @return the x-coordinate.
 	 */
 	public int getX() {
+		//use to check if fish is home!!
 		return this.x;
 	}
 
@@ -233,6 +242,7 @@ public abstract class WorldObject {
 	 * @return the y-coordinate.
 	 */
 	public int getY() {
+		//use to check if fish is home!!
 		return this.y;
 	}
 

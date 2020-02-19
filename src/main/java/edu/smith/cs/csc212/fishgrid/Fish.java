@@ -42,6 +42,8 @@ public class Fish extends WorldObject {
 	}
 	
 	boolean fastScared;
+	
+	boolean harderFish = false;
 
 
 	/**
@@ -61,7 +63,15 @@ public class Fish extends WorldObject {
 	 * @return the Color object from our array.
 	 */
 	public Color getColor() {
+		// Classifies fish that receive more points (based on color) as harder
+		if (COLORS[this.color] == Color.cyan) {
+			this.harderFish = true;
+		}
 		return COLORS[this.color];
+	}
+	
+	public boolean getLevel() {
+		return this.harderFish;
 	}
 	
 	/**

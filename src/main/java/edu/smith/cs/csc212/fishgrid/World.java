@@ -117,6 +117,8 @@ public class World {
 		Set<IntPoint> available = new HashSet<>();
 		for (int x=0; x<getWidth(); x++) {
 			for (int y=0; y<getHeight(); y++) {
+				//make space with fish and rocks unusable
+				//if ( x == )
 				available.add(new IntPoint(x, y));
 			}
 		}
@@ -210,9 +212,8 @@ public class World {
 		List<WorldObject> inSpot = this.find(x, y);
 		
 		for (WorldObject it : inSpot) {
-			// TODO(FishGrid): Don't let us move over rocks as a Fish.
 			// The other fish shouldn't step "on" the player, the player should step on the other fish.
-			if (it instanceof Snail) {
+			if (it instanceof Snail || it instanceof Rock || (it instanceof Fish && !isPlayer)) {
 				// This if-statement doesn't let anyone step on the Snail.
 				// The Snail(s) are not gonna take it.
 				return false;
@@ -240,14 +241,17 @@ public class World {
 	 */
 	public static void objectsFollow(WorldObject target, List<? extends WorldObject> followers) {
 		// TODO(FishGrid) Comment this method!
-		// Q1. What is recentPositions? A variable initiated in WorldObject that stores the order of items to queue and dequeue. 
-		// Q2. What is followers? A list of objects that follow the leader.
-		// Q3. What is target? Target is an object that represents the leader.
-		// Q4. Why is past = putWhere[i+1]? Why not putWhere[i]? The loop tells a found item where to go on the list. Since setPosition uses 0 as going before 
+		/* Q1. What is recentPositions? A variable initiated in WorldObject that stores the order of items to queue and dequeue. 
+		 Q2. What is followers? A list of objects that follow the leader.
+		 Q3. What is target? Target is an object that represents the leader.
+		 Q4. Why is past = putWhere[i+1]? Why not putWhere[i]? 
+		 * 			The loop tells a found item where to go on the list, 
+		 * 			and new found fish need to go after old found fish.
+		 */
 		List<IntPoint> putWhere = new ArrayList<>(target.recentPositions);
 		for (int i=0; i < followers.size() && i+1 < putWhere.size(); i++) {
 			System.out.println("i= " + i + " followers size = " + followers.size() + " i + 1 = " + i+1 + " putWhere.size()= " + putWhere.size());
-			// Q5. What is the deal with the two conditions in this for-loop?
+			// Q5. What is the deal with the two conditions in this for-loop? 
 			// Conditions are in the "while" part of this loop.
 			
 			IntPoint past = putWhere.get(i+1);

@@ -34,6 +34,8 @@ public class FishGame {
 	 */
 	List<Fish> found;
 	
+	List<Fish> homeList;
+	
 	/**
 	 * Number of steps!
 	 */
@@ -43,9 +45,7 @@ public class FishGame {
 	 * Score!
 	 */
 	int score;
-	
-	boolean harderFish;
-	
+		
 	
 	/**
 	 * Create a FishGame of a particular size.
@@ -60,6 +60,7 @@ public class FishGame {
 		
 		missing = new ArrayList<Fish>();
 		found = new ArrayList<Fish>();
+		homeList = new ArrayList<Fish>();
 		
 		// Add a home!
 		home = world.insertFishHome();
@@ -77,23 +78,12 @@ public class FishGame {
 		// Start the player at "home".
 		player.setPosition(home.getX(), home.getY());
 		player.markAsPlayer();
-		world.register(player);
-		
-		this.harderFish = false;
-		
+		world.register(player);		
 		
 		
 		// Generate fish of all the colors but the first into the "missing" List.
 		for (int ft = 1; ft < Fish.COLORS.length; ft++) {
 			Fish friend = world.insertFishRandomly(ft);
-			
-			if (friend.getColor() == Color.cyan) {
-				this.harderFish = true;
-		
-			} else {
-				this.harderFish = false;
-			}
-			
 			missing.add(friend);
 			
 		}		
@@ -113,8 +103,18 @@ public class FishGame {
 	 * @return true if the player has won (or maybe lost?).
 	 */
 	public boolean gameOver() {
-		// TODO(FishGrid) We want to bring the fish home before we win!
-		return missing.isEmpty();
+		// bring the fish home before we win!
+		return player.getX() == home.getX() && player.getY() == home.getY() && missing.isEmpty();
+	}
+	
+	public boolean isHome() {
+		return player.getX() == home.getX() && player.getY() == home.getY();
+	}
+	
+	public void takeHome() {
+		for (WorldObject items : homeList) {
+			world.remove(items);
+		}
 	}
 
 	/**
@@ -123,6 +123,10 @@ public class FishGame {
 	public void step() {
 		// Keep track of how long the game has run.
 		this.stepsTaken += 1;
+		
+		if (this.isHome()) {
+			this.stepsTaken = 0;
+		}
 				
 		// These are all the objects in the world in the same cell as the player.
 		List<WorldObject> overlap = this.player.findSameCell();
@@ -144,12 +148,28 @@ public class FishGame {
 				missing.remove(justFound);
 				
 				// Increase score when you find a fish!
-				if (this.harderFish) {
-					score += 15;//TODO: if statement with bool for fish who receive more points
+				if (justFound.harderFish) {
+					score += 15;
 				} else {
 					score += 10;
 				}
+				
 			}
+			
+			
+		}
+		
+		
+		for (WorldObject items : found) {
+			if (this.isHome()) {
+				homeList.add((Fish) items);
+				this.takeHome();
+			}
+			
+		}
+		
+		for (WorldObject items : homeList) {
+			found.remove(items);
 		}
 		
 		// Make sure missing fish *do* something.
@@ -158,6 +178,24 @@ public class FishGame {
 		World.objectsFollow(player, found);
 		// Step any world-objects that run themselves.
 		world.stepAll();
+		
+		for (WorldObject fish : missing) {
+			if (fish.getX() == home.getX() && fish.getY() == home.getY()) {
+				homeList.add((Fish) fish);
+			}
+			
+		}
+		for (Fish fish : found) {
+			if (this.stepsTaken > 20) {
+				System.out.println(this.stepsTaken);
+				//make it so that fish might get LOST
+				//if (rand.nextDouble() < 0.7) {
+					//missing.add(fish);
+				//}
+				
+				
+			}
+		}
 	}
 	
 	/**
@@ -169,16 +207,17 @@ public class FishGame {
 			// 30% of the time, lost fish move randomly.
 			if (!lost.fastScared) {
 				if (rand.nextDouble() < 0.3) {
-					// TODO(lab): What goes here?
 					lost.moveRandomly();
 				} 
 			} else {
 				if (rand.nextDouble() < 0.8) {
 					lost.moveRandomly();
-					System.out.println("i'm fast and scared");
 				}
 			}
+		
 		}
+		//HAHHAHA WHATS GOING ONNNN
+		
 	}
 
 	/**
@@ -190,7 +229,15 @@ public class FishGame {
 		// TODO(FishGrid) use this print to debug your World.canSwim changes!
 		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
-		// TODO(FishGrid) allow the user to click and remove rocks.
+		for (WorldObject wo : atPoint) {
+			if (wo.isRock()) {
+				wo.remove();
+			} else {
+				throw new AssertionError("Oops! You can only remove rocks.");
+			}
+		}
+		
+		
 
 	}
 	

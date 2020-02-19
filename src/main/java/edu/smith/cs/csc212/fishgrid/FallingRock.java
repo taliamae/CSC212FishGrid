@@ -7,6 +7,7 @@ public class FallingRock extends Rock {
 	}
 	
 	public void step() {
+		//TODO: rock can still fall onto player (fix in CanSwim?)
 		this.moveDown();
 	}
 
