@@ -54,6 +54,7 @@ public class FishGame {
 	 */
 	
 	public static final int NUM_ROCKS = 10;
+	public static final int NUM_HEARTS = 3;
 	
 	public FishGame(int w, int h) {
 		world = new World(w, h);
@@ -69,6 +70,15 @@ public class FishGame {
 		for (int i=0; i<NUM_ROCKS; i++) {
 			world.insertRockRandomly();
 		}
+		
+		for (int i=0; i<NUM_HEARTS; i++) {
+			world.insertHeartRandomly();
+		}
+		
+		if (this.stepsTaken > 10) {
+			
+		}
+		
 		
 		world.insertSnailRandomly();
 		world.insertFallingRockRandomly();
@@ -126,6 +136,7 @@ public class FishGame {
 		
 		if (this.isHome()) {
 			this.stepsTaken = 0;
+			System.out.println(this.stepsTaken);
 		}
 				
 		// These are all the objects in the world in the same cell as the player.
@@ -147,27 +158,26 @@ public class FishGame {
 				found.add(justFound);
 				missing.remove(justFound);
 				
+				// Reset steps taken each time a fish is picked up
+				stepsTaken = 0;
+				
 				// Increase score when you find a fish!
 				if (justFound.harderFish) {
 					score += 15;
 				} else {
 					score += 10;
-				}
-				
+				}	
 			}
-			
-			
 		}
 		
-		
+		// When found fish come home, they turn into home fish and disappear off screen
 		for (WorldObject items : found) {
 			if (this.isHome()) {
 				homeList.add((Fish) items);
 				this.takeHome();
 			}
-			
 		}
-		
+
 		for (WorldObject items : homeList) {
 			found.remove(items);
 		}
@@ -179,22 +189,28 @@ public class FishGame {
 		// Step any world-objects that run themselves.
 		world.stepAll();
 		
+		
+		//If fish wander home by accident, they disappear
 		for (WorldObject fish : missing) {
 			if (fish.getX() == home.getX() && fish.getY() == home.getY()) {
 				homeList.add((Fish) fish);
 			}
 			
 		}
-		for (Fish fish : found) {
+		Random rand = ThreadLocalRandom.current();
+		for (int i=0; i<found.size(); i++) {
 			if (this.stepsTaken > 20) {
 				System.out.println(this.stepsTaken);
 				//make it so that fish might get LOST
-				//if (rand.nextDouble() < 0.7) {
-					//missing.add(fish);
-				//}
-				
-				
+				if (rand.nextDouble() < 0.7 && i > 0) {
+					missing.add(found.get(i));
+					found.get(i).moveRandomly();
+					System.out.println("sorry bye");
+				}
 			}
+		}
+		for (Fish fish : missing) {
+			found.remove(fish);
 		}
 	}
 	
@@ -214,9 +230,7 @@ public class FishGame {
 					lost.moveRandomly();
 				}
 			}
-		
 		}
-		//HAHHAHA WHATS GOING ONNNN
 		
 	}
 
@@ -226,8 +240,6 @@ public class FishGame {
 	 * @param y - the y-tile.
 	 */
 	public void click(int x, int y) {
-		// TODO(FishGrid) use this print to debug your World.canSwim changes!
-		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
 		for (WorldObject wo : atPoint) {
 			if (wo.isRock()) {

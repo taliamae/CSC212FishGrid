@@ -159,6 +159,12 @@ public class World {
 		return r;
 	}
 	
+	public Heart insertHeartRandomly() {
+		Heart h = new Heart(this);
+		insertRandomly(h);
+		return h;
+	}
+	
 	public FallingRock insertFallingRockRandomly() {
 		FallingRock r = new FallingRock(this);
 		insertRandomly(r);
@@ -241,17 +247,19 @@ public class World {
 	 */
 	public static void objectsFollow(WorldObject target, List<? extends WorldObject> followers) {
 		// TODO(FishGrid) Comment this method!
-		/* Q1. What is recentPositions? A variable initiated in WorldObject that stores the order of items to queue and dequeue. 
-		 Q2. What is followers? A list of objects that follow the leader.
-		 Q3. What is target? Target is an object that represents the leader.
-		 Q4. Why is past = putWhere[i+1]? Why not putWhere[i]? 
+		/* Q1. What is recentPositions? A list initiated in WorldObject that stores the order of items to queue and dequeue. 
+		 	Q2. What is followers? A list of objects that follow the leader.
+		 	Q3. What is target? Target indicates where the player should go based on the arrow key that is pressed.
+		 	Q4. Why is past = putWhere[i+1]? Why not putWhere[i]? 
 		 * 			The loop tells a found item where to go on the list, 
 		 * 			and new found fish need to go after old found fish.
 		 */
 		List<IntPoint> putWhere = new ArrayList<>(target.recentPositions);
 		for (int i=0; i < followers.size() && i+1 < putWhere.size(); i++) {
-			System.out.println("i= " + i + " followers size = " + followers.size() + " i + 1 = " + i+1 + " putWhere.size()= " + putWhere.size());
-			// Q5. What is the deal with the two conditions in this for-loop? 
+			System.out.println("i= " + i + " followers size = " + followers.size() + " putWhere.size()= " + putWhere.size());
+			// Q5. What is the deal with the two conditions in this for-loop?
+				// The loop has to stop at the end of followers because it must check to make sure it doesn't loop past the size of the followers list.
+				// The loop has to stop one count lower than the size of putWhere to make sure there is room for the fish on the screen.
 			// Conditions are in the "while" part of this loop.
 			
 			IntPoint past = putWhere.get(i+1);
