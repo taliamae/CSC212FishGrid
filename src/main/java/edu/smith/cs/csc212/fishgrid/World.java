@@ -246,7 +246,6 @@ public class World {
 	 * @param followers a set of objects to follow the leader.
 	 */
 	public static void objectsFollow(WorldObject target, List<? extends WorldObject> followers) {
-		// TODO(FishGrid) Comment this method!
 		/* Q1. What is recentPositions? A list initiated in WorldObject that stores the order of items to queue and dequeue. 
 		 	Q2. What is followers? A list of objects that follow the leader.
 		 	Q3. What is target? Target indicates where the player should go based on the arrow key that is pressed.

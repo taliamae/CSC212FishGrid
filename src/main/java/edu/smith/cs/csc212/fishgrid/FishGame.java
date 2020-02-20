@@ -1,6 +1,5 @@
 package edu.smith.cs.csc212.fishgrid;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -75,10 +74,6 @@ public class FishGame {
 			world.insertHeartRandomly();
 		}
 		
-		if (this.stepsTaken > 10) {
-			
-		}
-		
 		
 		world.insertSnailRandomly();
 		world.insertFallingRockRandomly();
@@ -117,6 +112,7 @@ public class FishGame {
 		return player.getX() == home.getX() && player.getY() == home.getY() && missing.isEmpty();
 	}
 	
+	// Returns true if player is home
 	public boolean isHome() {
 		return player.getX() == home.getX() && player.getY() == home.getY();
 	}
@@ -136,7 +132,6 @@ public class FishGame {
 		
 		if (this.isHome()) {
 			this.stepsTaken = 0;
-			System.out.println(this.stepsTaken);
 		}
 				
 		// These are all the objects in the world in the same cell as the player.
@@ -197,15 +192,14 @@ public class FishGame {
 			}
 			
 		}
+		
+		// Fish second in line and beyond can wander off again after 20 steps
 		Random rand = ThreadLocalRandom.current();
 		for (int i=0; i<found.size(); i++) {
 			if (this.stepsTaken > 20) {
-				System.out.println(this.stepsTaken);
-				//make it so that fish might get LOST
 				if (rand.nextDouble() < 0.7 && i > 0) {
 					missing.add(found.get(i));
 					found.get(i).moveRandomly();
-					System.out.println("sorry bye");
 				}
 			}
 		}
@@ -225,6 +219,7 @@ public class FishGame {
 				if (rand.nextDouble() < 0.3) {
 					lost.moveRandomly();
 				} 
+			// Some fish are more likely to move than others
 			} else {
 				if (rand.nextDouble() < 0.8) {
 					lost.moveRandomly();
@@ -244,8 +239,6 @@ public class FishGame {
 		for (WorldObject wo : atPoint) {
 			if (wo.isRock()) {
 				wo.remove();
-			} else {
-				throw new AssertionError("Oops! You can only remove rocks.");
 			}
 		}
 		
